@@ -24,18 +24,20 @@ pipeline {
                 '''
             }
         }
-       stage('Docker Login') {
+      stage('Docker Login') {
     steps {
         withCredentials([usernamePassword(
             credentialsId: 'dockerhub-creds',
             usernameVariable: 'USER',
             passwordVariable: 'PASS'
         )]) {
-            sh 'echo $PASS | docker login -u $USER --password-stdin'
+            sh '''
+            mkdir -p ~/.docker
+            echo "$PASS" | docker login -u "$USER" --password-stdin --config ~/.docker
+            '''
         }
     }
 }
-
         stage('Push Docker Image') {
             steps {
                 sh 'docker push gundusowjanya/my-k8s-app:${BUILD_NUMBER}'
