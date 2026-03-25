@@ -24,17 +24,14 @@ pipeline {
                 '''
             }
         }
-    stage('Docker Login') {
+        stage('Docker Login') {
     steps {
         withCredentials([usernamePassword(
             credentialsId: 'dockerhub-creds',
             usernameVariable: 'USER',
             passwordVariable: 'PASS'
         )]) {
-            sh '''
-                # Use a temporary Docker config to avoid pass errors
-                echo $PASS | docker login -u $USER --password-stdin --config /tmp/docker-config
-            '''
+            sh 'docker login -u $USER -p $PASS'
         }
     }
 }
